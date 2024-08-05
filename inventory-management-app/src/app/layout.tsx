@@ -1,11 +1,9 @@
 
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import { NavBar } from "../components";
 import "./globals.css";
 import { AuthContextProvider } from "../context/AuthContext";
 
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Inventory Management App",
@@ -19,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className='bg-bgimg'>
         <AuthContextProvider>
           <NavBar />
           {children}

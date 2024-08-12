@@ -41,11 +41,11 @@ const NavBar: React.FC = () => {
     <section className=''>
       <div className="flex justify-between items-center p-3 h-14 bg-violet-700 text-white rounded-2xl m-5">
         <ul>
-          <li className='ml-10 font-mono text-[25px]'><Link href='/'>PantryTracker</Link></li>
+          <li className='ml-10 font-mono sm:text-[25px]'><Link href='/'>PantryTracker</Link></li>
         </ul>
         <ul>
-        {loading ? null : !user ? (<div className="flex flex-row"><li className='mx-2' onClick={handleSignIn}><Link href='/'>Login</Link></li>
-          <li className='mx-2' onClick={handleSignIn}><Link href='/'>Signup</Link></li></div>) : (<li className='mx-2 cursor-pointer' onClick={handleSignOut}><Link href='/'>Logout</Link></li>)}
+        {loading ? null : !user ? (<div className="flex flex-row"><li className='mx-2 text-[15px]' onClick={handleSignIn}><Link href='/'>Login</Link></li>
+          <li className='mx-2 text-[15px]' onClick={handleSignIn}><Link href='/'>Signup</Link></li></div>) : (<li className='mx-2 cursor-pointer' onClick={handleSignOut}><Link href='/'>Logout</Link></li>)}
         </ul>
       </div>
     </section>

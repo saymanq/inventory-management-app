@@ -156,11 +156,11 @@ export default function Home() {
     flexDirection={'column'}
     alignItems={'center'}
     >
-    <div className="bg-violet-600 text-white sm:w-[500px] w-[380px] h-[300px] flex justify-center items-center mt-[150px] flex-col rounded-2xl">
-      <Typography variant="h6">Please log in to view your inventory.</Typography>
-      <Typography variant="h6" className='my-3'>OR</Typography>
+    <div className="bg-violet-600 text-white sm:w-[500px] w-[330px] h-[300px] flex justify-center items-center mt-[150px] flex-col rounded-2xl">
+      <Typography className='sm:text-[20px] text-[15px]'>Please log in to view your inventory.</Typography>
+      <Typography className='my-3 sm:text-[20px] text-[15px]'>OR</Typography>
       <a className="bg-violet-800 rounded-xl px-4 py-2 cursor-pointer hover:bg-violet-900" onClick={handleGuestAccess}>
-        <Typography>Get Guest Access</Typography>
+        <Typography className='sm:text-[20px] text-[15px]'>Get Guest Access</Typography>
       </a>  
     </div>
   </Box>;
@@ -209,6 +209,7 @@ export default function Home() {
         </Stack>
       </Box>
     </Modal>
+    
     <TextField
           id="filled-search"
           label="Search field"
@@ -218,9 +219,9 @@ export default function Home() {
           onChange={(e) => setSearchText(e.target.value)}
           
     />
+    <div className="w-[350px] sm:w-[900px]">
     <Box border={'3px solid #6c28d9'} marginTop={3} sx={{ backgroundColor: '#1c1917'}}>
       <Box
-        width="800px"
         height="60px"
         bgcolor={'#6c28d9'}
         display={'flex'}
@@ -231,7 +232,7 @@ export default function Home() {
           Inventory Items
         </Typography>
       </Box>
-      <Stack width="800px" height="300px" spacing={1} overflow={'auto'}>
+      <Stack height="300px" spacing={1} overflow={'auto'}>
         <Box height='1px' />
         {displayinventory.map(({name, quantity}) => (
           <Box
@@ -244,22 +245,26 @@ export default function Home() {
             bgcolor={'#f0f0f0'}
             paddingX={5}
           >
-            <Typography variant={'h6'} color={'#333'} textAlign={'center'}>
+            <Typography className='sm:text-[25px] text-[15px]' color={'#333'} textAlign={'center'}>
               {name.charAt(0).toUpperCase() + name.slice(1)}
             </Typography>
-            <Typography variant={'h6'} color={'#333'} textAlign={'center'}>
+            <Typography className='sm:text-[25px] text-[15px]' color={'#333'} textAlign={'center'}>
               Quantity: {quantity}
             </Typography>
+            <div className=''>
             <Button variant="contained" sx={{ backgroundColor: '#6c28d9', borderRadius:'16px', '&:hover': {backgroundColor: '#5a21b6'} }} onClick={() => removeItem(name)}>
               Remove
             </Button>
+            </div>
           </Box>
         ))}
       </Stack>
     </Box>
+    </div>
     <Button variant="contained" sx={{ backgroundColor: '#6c28d9', marginTop: '5px', borderRadius:'16px', '&:hover': {backgroundColor: '#5a21b6'} }} onClick={handleOpen}>
       Add New Item
     </Button>
+    
   </Box>
   )
 }

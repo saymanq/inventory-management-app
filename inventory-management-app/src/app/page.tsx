@@ -79,8 +79,8 @@ export default function Home() {
     const inventoryList: InventoryItem[] = [...inventory]
     const newItem = item.toUpperCase() 
     if (inventoryList.some(itemm => itemm.name === newItem)) {
-      const foundItem: InventoryItem = inventoryList.find(itemm => itemm.name === newItem);
-      foundItem.quantity += 1;
+      const foundItem: InventoryItem | undefined = inventoryList.find(itemm => itemm.name === newItem);
+      foundItem!.quantity += 1;
     } else {
       inventoryList.push({name: newItem, quantity: 1 } as InventoryItem)
     }
@@ -108,13 +108,13 @@ export default function Home() {
     const inventoryList: InventoryItem[] = [...inventory]
     const newItem = item.toUpperCase() 
     if (inventoryList.some(itemm => itemm.name === newItem)) {
-      const foundItem: InventoryItem = inventoryList.find(itemm => itemm.name === newItem);
-      if (foundItem.quantity === 1) {
+      const foundItem: InventoryItem | undefined = inventoryList.find(itemm => itemm.name === newItem);
+      if (foundItem!.quantity === 1) {
         const updatedList = inventoryList.filter(foundItem => foundItem.name !== newItem);
         setInventory(updatedList);
         setDisplayInventory(updatedList);
       } else { 
-        foundItem.quantity -= 1;
+        foundItem!.quantity -= 1;
         const updatedList = inventoryList
         setInventory(updatedList);
         console.log(updatedList);

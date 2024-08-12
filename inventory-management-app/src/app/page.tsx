@@ -33,6 +33,7 @@ export default function Home() {
   const [itemName, setItemName] = useState<string>('')
   const [loading, setLoading] = useState(true);
   const [searchtext, setSearchText] = useState('');
+  const [guest, setGuest] = useState(false);
 
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
@@ -46,6 +47,7 @@ export default function Home() {
     docs.forEach((doc) => {
       inventoryList.push({ name: doc.id, ...doc.data() } as InventoryItem)
     })
+    console.log(inventoryList);
     setInventory(inventoryList);
     setDisplayInventory(inventoryList);
   }
@@ -64,41 +66,88 @@ export default function Home() {
       await new Promise((resolve) => setTimeout(resolve, 20));
       setLoading(false);
     };
+    if (!user) {
+      setInventory([]);
+      setDisplayInventory([]);
+    }
     checkAuthentication();
     updateInventory()
+    setGuest(false);
   }, [user])
 
-  
+  const guestAddItem = (item: string) => {
+    const inventoryList: InventoryItem[] = [...inventory]
+    const newItem = item.toUpperCase() 
+    if (inventoryList.some(itemm => itemm.name === newItem)) {
+      const foundItem: InventoryItem = inventoryList.find(itemm => itemm.name === newItem);
+      foundItem.quantity += 1;
+    } else {
+      inventoryList.push({name: newItem, quantity: 1 } as InventoryItem)
+    }
+    setInventory(inventoryList);
+    setDisplayInventory(inventoryList);
+  }
 
   const addItem = async (item: string) => {
+    if (!guest) {
     const docRef = doc(firestore, user.uid, item)
-    const docSnap = await getDoc(docRef)
-    if (docSnap.exists()) {
-      const { quantity } = docSnap.data() as { quantity: number };
-      await setDoc(docRef, { quantity: quantity + 1 })
+      const docSnap = await getDoc(docRef)
+      if (docSnap.exists()) {
+        const { quantity } = docSnap.data() as { quantity: number };
+        await setDoc(docRef, { quantity: quantity + 1 })
+      } else {
+        await setDoc(docRef, { quantity: 1 }, { merge: true })
+      }
+      await updateInventory()
     } else {
-      await setDoc(docRef, { quantity: 1 }, { merge: true })
+      guestAddItem(item)
     }
-    await updateInventory()
   }
 
-  
-  
-  const removeItem = async (item: string) => {
-    const docRef = doc(firestore, user.uid, item)
-    const docSnap = await getDoc(docRef)
-    if (docSnap.exists()) {
-      const { quantity } = docSnap.data() as { quantity: number };
-      if (quantity === 1) {
-        await deleteDoc(docRef)
-      } else {
-        await setDoc(docRef, { quantity: quantity - 1 })
+  const guestRemoveItem = (item: string) => {
+    const inventoryList: InventoryItem[] = [...inventory]
+    const newItem = item.toUpperCase() 
+    if (inventoryList.some(itemm => itemm.name === newItem)) {
+      const foundItem: InventoryItem = inventoryList.find(itemm => itemm.name === newItem);
+      if (foundItem.quantity === 1) {
+        const updatedList = inventoryList.filter(foundItem => foundItem.name !== newItem);
+        setInventory(updatedList);
+        setDisplayInventory(updatedList);
+      } else { 
+        foundItem.quantity -= 1;
+        const updatedList = inventoryList
+        setInventory(updatedList);
+        console.log(updatedList);
+        setDisplayInventory(updatedList);
       }
     }
-    await updateInventory()
+    
+  }
+  
+  const removeItem = async (item: string) => {
+    if (!guest) {  
+      const docRef = doc(firestore, user.uid, item)
+      const docSnap = await getDoc(docRef)
+      if (docSnap.exists()) {
+        const { quantity } = docSnap.data() as { quantity: number };
+        if (quantity === 1) {
+          await deleteDoc(docRef)
+        } else {
+          await setDoc(docRef, { quantity: quantity - 1 })
+        }
+      }
+      await updateInventory()
+    } else {
+      guestRemoveItem(item)
+    }
   }
 
-  if (!user) {
+
+  const handleGuestAccess = () => {
+    setGuest(true);
+  }
+
+  if (!user && !guest) {
     return <Box
     width="100%"
     height="100%"
@@ -107,12 +156,17 @@ export default function Home() {
     flexDirection={'column'}
     alignItems={'center'}
     >
-    <div className="bg-violet-600 text-white w-[500px] h-[300px] flex justify-center items-center mt-[150px] rounded-2xl">
+    <div className="bg-violet-600 text-white sm:w-[500px] w-[380px] h-[300px] flex justify-center items-center mt-[150px] flex-col rounded-2xl">
       <Typography variant="h6">Please log in to view your inventory.</Typography>
+      <Typography variant="h6" className='my-3'>OR</Typography>
+      <a className="bg-violet-800 rounded-xl px-4 py-2 cursor-pointer hover:bg-violet-900" onClick={handleGuestAccess}>
+        <Typography>Get Guest Access</Typography>
+      </a>  
     </div>
   </Box>;
   }
 
+  if (user || guest) {
   return (
   <Box
     width="100%"
@@ -208,4 +262,5 @@ export default function Home() {
     </Button>
   </Box>
   )
+}
 }

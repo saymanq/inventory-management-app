@@ -23,7 +23,6 @@ const NavBar: React.FC = () => {
 
   const handleSignOut = async () => {
     try {
-      console.log(user);
       await logOut();
     } catch (error) {
       console.log(error);
